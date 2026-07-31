@@ -1,11 +1,49 @@
-import React, { useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
+import axios from '../axiosConfig';
 
 const Register = () => {
+    const navigate = useNavigate();
+    const [formData, setFormData] = useState({
+        email: '',
+        phone: '',
+        password: '',
+        confirmPassword: ''
+    });
+    const [error, setError] = useState('');
+    const [loading, setLoading] = useState(false);
+
     useEffect(() => {
         window.scrollTo(0, 0);
     }, []);
+
+    const handleChange = (e) => {
+        setFormData({ ...formData, [e.target.name]: e.target.value });
+    };
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        setError('');
+
+        if (formData.password !== formData.confirmPassword) {
+            return setError('Passwords do not match');
+        }
+
+        setLoading(true);
+        try {
+            await axios.post('/api/auth/register', {
+                email: formData.email,
+                phone: formData.phone,
+                password: formData.password
+            });
+            navigate('/login');
+        } catch (err) {
+            setError(err.response?.data?.message || 'Registration failed. Please try again.');
+        } finally {
+            setLoading(false);
+        }
+    };
 
     return (
         <div className="min-h-screen flex bg-white font-sans">
@@ -31,7 +69,13 @@ const Register = () => {
                             </p>
                         </div>
 
-                        <form className="space-y-4" onSubmit={(e) => e.preventDefault()}>
+                        {error && (
+                            <div className="mb-4 p-4 bg-red-50 border-l-4 border-red-500 text-red-700">
+                                <p>{error}</p>
+                            </div>
+                        )}
+
+                        <form className="space-y-4" onSubmit={handleSubmit}>
                             {/* Email Input */}
                             <div className="relative">
                                 <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
@@ -39,6 +83,9 @@ const Register = () => {
                                 </div>
                                 <input 
                                     type="email" 
+                                    name="email"
+                                    value={formData.email}
+                                    onChange={handleChange}
                                     placeholder="Email Address"
                                     className="w-full pl-12 pr-4 py-3.5 rounded-xl border border-slate-200 text-slate-700 font-medium focus:outline-none focus:border-primary focus:ring-4 focus:ring-primary/10 transition-all placeholder:font-normal placeholder:text-slate-400"
                                     required
@@ -52,6 +99,9 @@ const Register = () => {
                                 </div>
                                 <input 
                                     type="tel" 
+                                    name="phone"
+                                    value={formData.phone}
+                                    onChange={handleChange}
                                     placeholder="Phone Number"
                                     className="w-full pl-12 pr-4 py-3.5 rounded-xl border border-slate-200 text-slate-700 font-medium focus:outline-none focus:border-primary focus:ring-4 focus:ring-primary/10 transition-all placeholder:font-normal placeholder:text-slate-400"
                                     required
@@ -65,6 +115,9 @@ const Register = () => {
                                 </div>
                                 <input 
                                     type="password" 
+                                    name="password"
+                                    value={formData.password}
+                                    onChange={handleChange}
                                     placeholder="Password"
                                     className="w-full pl-12 pr-4 py-3.5 rounded-xl border border-slate-200 text-slate-700 font-medium focus:outline-none focus:border-primary focus:ring-4 focus:ring-primary/10 transition-all placeholder:font-normal placeholder:text-slate-400"
                                     required
@@ -78,6 +131,9 @@ const Register = () => {
                                 </div>
                                 <input 
                                     type="password" 
+                                    name="confirmPassword"
+                                    value={formData.confirmPassword}
+                                    onChange={handleChange}
                                     placeholder="Confirm Password"
                                     className="w-full pl-12 pr-4 py-3.5 rounded-xl border border-slate-200 text-slate-700 font-medium focus:outline-none focus:border-primary focus:ring-4 focus:ring-primary/10 transition-all placeholder:font-normal placeholder:text-slate-400"
                                     required
@@ -87,9 +143,10 @@ const Register = () => {
                             <div className="pt-2">
                                 <button 
                                     type="submit"
-                                    className="w-full bg-primary hover:bg-primary-dark text-white font-bold py-3.5 px-6 rounded-xl shadow-lg shadow-primary/30 transition-all hover:-translate-y-0.5 active:translate-y-0"
+                                    disabled={loading}
+                                    className={`w-full bg-primary hover:bg-primary-dark text-white font-bold py-3.5 px-6 rounded-xl shadow-lg shadow-primary/30 transition-all hover:-translate-y-0.5 active:translate-y-0 ${loading ? 'opacity-70 cursor-not-allowed' : ''}`}
                                 >
-                                    Register
+                                    {loading ? 'Registering...' : 'Register'}
                                 </button>
                             </div>
                         </form>

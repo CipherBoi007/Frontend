@@ -2,6 +2,10 @@ const express = require('express');
 const router = express.Router();
 const Staff = require('../models/Staff');
 const Activity = require('../models/Activity');
+const { protect } = require('../middleware/authMiddleware');
+
+// Apply middleware to all routes in this file
+router.use(protect);
 
 // Get all staff
 router.get('/', async (req, res) => {

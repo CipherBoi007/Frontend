@@ -1,17 +1,37 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import axios, { setAccessToken } from '../axiosConfig';
 import { motion } from 'framer-motion';
 
 const Login = () => {
-    const [username, setUsername] = useState('');
+    const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
+    const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
 
     useEffect(() => {
         window.scrollTo(0, 0);
     }, []);
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        setError('');
+        setLoading(true);
+        try {
+            const res = await axios.post('/api/auth/login', { email, password });
+            if (res.data.accessToken) {
+                setAccessToken(res.data.accessToken);
+                // Fallback for simplicity on refresh (optional, but good for UX)
+                localStorage.setItem('adminToken', res.data.accessToken);
+                navigate('/admin');
+            }
+        } catch (err) {
+            setError(err.response?.data?.message || 'Invalid Email or Password');
+        } finally {
+            setLoading(false);
+        }
+    };
 
     return (
         <div className="min-h-screen flex bg-white font-sans">
@@ -38,32 +58,20 @@ const Login = () => {
                                 Welcome back
                             </h2>
                             <p className="text-slate-500 font-medium">Please enter your details to sign in.</p>
-                            {error && <p className="text-red-500 text-sm mt-2 font-medium">{error}</p>}
+                            {error && <p className="text-red-500 text-sm mt-2 font-medium p-3 bg-red-50 border-l-4 border-red-500">{error}</p>}
                         </div>
 
-                        <form className="space-y-5" onSubmit={async (e) => {
-                            e.preventDefault();
-                            setError('');
-                            try {
-                                const res = await axios.post('/api/auth/login', { username, password });
-                                if (res.data.token) {
-                                    localStorage.setItem('adminToken', res.data.token);
-                                    navigate('/admin');
-                                }
-                            } catch (err) {
-                                setError('Invalid Username or Password');
-                            }
-                        }}>
-                            {/* Username Input */}
+                        <form className="space-y-5" onSubmit={handleSubmit}>
+                            {/* Email Input */}
                             <div className="relative">
                                 <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
                                     <svg className="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
                                 </div>
                                 <input 
-                                    type="text" 
-                                    placeholder="Username"
-                                    value={username}
-                                    onChange={(e) => setUsername(e.target.value)}
+                                    type="email" 
+                                    placeholder="Email Address"
+                                    value={email}
+                                    onChange={(e) => setEmail(e.target.value)}
                                     className="w-full pl-12 pr-4 py-3.5 rounded-xl border border-slate-200 text-slate-700 font-medium focus:outline-none focus:border-primary focus:ring-4 focus:ring-primary/10 transition-all placeholder:font-normal placeholder:text-slate-400"
                                     required
                                 />

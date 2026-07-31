@@ -2,6 +2,10 @@ const express = require('express');
 const router = express.Router();
 const Department = require('../models/Department');
 const Activity = require('../models/Activity');
+const { protect } = require('../middleware/authMiddleware');
+
+// Apply middleware to all routes in this file
+router.use(protect);
 
 // Get all departments
 router.get('/', async (req, res) => {

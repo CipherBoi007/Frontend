@@ -3,9 +3,10 @@ const router = express.Router();
 const Staff = require('../models/Staff');
 const Department = require('../models/Department');
 const Activity = require('../models/Activity');
+const { protect } = require('../middleware/authMiddleware');
 
 // Get dashboard stats
-router.get('/stats', async (req, res) => {
+router.get('/stats', protect, async (req, res) => {
     try {
         const totalStaff = await Staff.countDocuments();
         const totalDepartments = await Department.countDocuments();
