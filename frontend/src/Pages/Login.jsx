@@ -95,9 +95,10 @@ const Login = () => {
                             <div className="flex items-center justify-between pt-2">
                                 <button 
                                     type="submit"
-                                    className="bg-primary hover:bg-primary-dark text-white font-bold py-3.5 px-10 rounded-xl shadow-lg shadow-primary/30 transition-all hover:-translate-y-0.5 active:translate-y-0"
+                                    disabled={loading}
+                                    className={`bg-primary hover:bg-primary-dark text-white font-bold py-3.5 px-10 rounded-xl shadow-lg shadow-primary/30 transition-all hover:-translate-y-0.5 active:translate-y-0 ${loading ? 'opacity-70 cursor-not-allowed' : ''}`}
                                 >
-                                    Login
+                                    {loading ? 'Logging in...' : 'Login'}
                                 </button>
                                 <Link to="/forgot-password" className="text-sm font-medium text-slate-500 hover:text-primary transition-colors">
                                     Forget Password?
