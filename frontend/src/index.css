@@ -1,0 +1,29 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-background text-text-main leading-relaxed antialiased font-sans;
+  }
+}
+
+@layer components {
+  .container-custom {
+    @apply max-w-[1320px] mx-auto px-6;
+  }
+
+  .btn {
+    @apply inline-flex items-center justify-center px-6 py-3 font-semibold text-[0.95rem] rounded-sm transition-all duration-200 cursor-pointer border border-transparent;
+  }
+  
+  .btn-primary {
+    @apply bg-primary text-secondary shadow-btn-primary hover:bg-primary-hover hover:-translate-y-[1px] hover:shadow-btn-primary-hover;
+  }
+  
+  .btn-outline {
+    @apply bg-transparent text-text-main border-border hover:bg-background hover:border-text-muted;
+  }
+}

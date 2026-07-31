@@ -1,0 +1,7 @@
+This project color design and structure wise fine but the data and how it convey the information 
+
+The primary function this website it to show this is an College management system and the Provide A-Z services 
+
+Make an change of words and data also cards that refelects and core service of website
+
+Currently it showcase an things that not even exist like API analystics blah blah and importantly testimonials missed 
